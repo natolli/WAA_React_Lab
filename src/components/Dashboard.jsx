@@ -1,41 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Posts } from "./Posts";
-import { PostDetail } from "./PostDetail";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 export const Dashboard = () => {
-  const [posts, setPosts] = useState([
-    { id: 111, title: "Happiness", author: "John" },
-    { id: 112, title: "MIU", author: "Enjoy Life" },
-    { id: 113, title: "Dean", author: "Jasmine" },
-  ]);
-  const [title, setTitle] = useState("");
-  const [selectedBox, setSelectedBox] = useState();
+  const [posts, setPosts] = useState([]);
 
-  const changeTitle = () => {
-    const postsEdi = posts.map((post) =>
-      post.id === 111 ? { ...post, title } : post
-    );
-    setPosts([...postsEdi]);
-    setTitle("");
-  };
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/api/posts")
+      .then((response) => setPosts(response.data))
+      .catch((error) => console.error("Error fetching posts:", error));
+  }, []);
 
   return (
     <div>
-      <Posts posts={posts} setSelectedBox={setSelectedBox} />
-      <div className="input_container">
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <button
-          className="button"
-          onClick={() => title !== "" && changeTitle()}
-        >
-          Change Name
-        </button>
-      </div>
-      {selectedBox && <PostDetail post={selectedBox} />}
+      <Link to="/add-post">Add New Post</Link>
+      <Posts posts={posts} />
     </div>
   );
 };
